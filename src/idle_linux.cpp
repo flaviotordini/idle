@@ -7,13 +7,16 @@
 
 namespace {
 
-const char *fdDisplayService = "org.freedesktop.ScreenSaver";
-const char *fdDisplayPath = "/org/freedesktop/ScreenSaver";
-const char *fdDisplayInterface = fdDisplayService;
+const QString fdDisplayService = "org.freedesktop.ScreenSaver";
+const QString fdDisplayPath = "/org/freedesktop/ScreenSaver";
+const QString fdDisplayInterface = fdDisplayService;
 
-const char *gnomeSystemService = "org.gnome.SessionManager";
-const char *gnomeSystemPath = "/org/gnome/SessionManager";
-const char *gnomeSystemInterface = gnomeSystemService;
+const QString gnomeSystemService = "org.gnome.SessionManager";
+const QString gnomeSystemPath = "/org/gnome/SessionManager";
+const QString gnomeSystemInterface = gnomeSystemService;
+
+const QString inhibitMethod = "Inhibit";
+const QString uninhibitMethod = "UnInhibit";
 
 quint32 cookie;
 QString errorMessage;
@@ -32,13 +35,14 @@ bool handleReply(const QDBusReply<quint32> &reply) {
 
 bool Idle::preventDisplaySleep(const QString &reason) {
     QDBusInterface dbus(fdDisplayService, fdDisplayPath, fdDisplayInterface);
-    QDBusReply<quint32> reply = dbus.call("Inhibit", QCoreApplication::applicationName(), reason);
+    QDBusReply<quint32> reply =
+            dbus.call(inhibitMethod, QCoreApplication::applicationName(), reason);
     return handleReply(reply);
 }
 
 bool Idle::allowDisplaySleep() {
     QDBusInterface dbus(fdDisplayService, fdDisplayPath, fdDisplayInterface);
-    dbus.call("UnInhibit", cookie);
+    dbus.call(uninhibitMethod, cookie);
     return true;
 }
 
@@ -48,13 +52,14 @@ QString Idle::displayErrorMessage() {
 
 bool Idle::preventSystemSleep(const QString &reason) {
     QDBusInterface dbus(gnomeSystemService, gnomeSystemPath, gnomeSystemInterface);
-    QDBusReply<quint32> reply = dbus.call("Inhibit", QCoreApplication::applicationName(), reason);
+    QDBusReply<quint32> reply =
+            dbus.call(inhibitMethod, QCoreApplication::applicationName(), reason);
     return handleReply(reply);
 }
 
 bool Idle::allowSystemSleep() {
     QDBusInterface dbus(gnomeSystemService, gnomeSystemPath, gnomeSystemInterface);
-    dbus.call("UnInhibit", cookie);
+    dbus.call(uninhibitMethod, cookie);
     return true;
 }
 
