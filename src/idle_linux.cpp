@@ -1,9 +1,9 @@
 #include "idle.h"
 
-#include <QtCore>
+#include <QDBusConnectionInterface>
 #include <QDBusInterface>
 #include <QDBusReply>
-#include <QDBusConnectionInterface>
+#include <QtCore>
 
 namespace {
 
@@ -21,7 +21,6 @@ QString errorMessage;
 bool handleReply(const QDBusReply<quint32> &reply) {
     if (reply.isValid()) {
         cookie = reply.value();
-        qDebug() << "Success!" << cookie;
         errorMessage.clear();
         return true;
     }
@@ -29,7 +28,7 @@ bool handleReply(const QDBusReply<quint32> &reply) {
     return false;
 }
 
-}
+} // namespace
 
 bool Idle::preventDisplaySleep(const QString &reason) {
     QDBusInterface dbus(fdDisplayService, fdDisplayPath, fdDisplayInterface);
@@ -62,4 +61,3 @@ bool Idle::allowSystemSleep() {
 QString Idle::systemErrorMessage() {
     return errorMessage;
 }
-
