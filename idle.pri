@@ -1,5 +1,4 @@
 INCLUDEPATH += $$PWD/src
-DEPENDPATH += $$PWD/src
 
 HEADERS += $$PWD/src/idle.h
 
